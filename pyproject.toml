@@ -7,7 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "typer>=0.12.5",
     "python-dotenv>=1.0.1",
-    "ansible>=10.5.0"
 ]
 
 [project.scripts]
