@@ -39,9 +39,9 @@ RUN ssh-keygen -t ecdsa -b 256 -N "" -f ~/.ssh/id_ecdsa && \
     echo "{}" > /home/vscode/.docker/config.json
 
 # Download and install uv
-ADD https://astral.sh/uv/${UV_VERSION}/install.sh /uv-installer.sh
+ADD https://astral.sh/uv/${UV_VERSION}/install.sh /app/uv-installer.sh
 
-RUN sh /uv-installer.sh && rm /uv-installer.sh
+RUN sh /app/uv-installer.sh && rm /app/uv-installer.sh
 
 ENV PATH=/root/.cargo/bin:$PATH
 
