@@ -1,3 +1,4 @@
+[![Open the Example in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/davidban77/labcli?quickstart=1&devcontainer_path=.devcontainer%2Fexample%2Fdevcontainer.json)
 # LabCLI
 
 LabCLI is a command line interface for managing lab environments. It is designed to be used as is or imported into other scripts or CLI applications.
@@ -21,7 +22,7 @@ To install the development environment you need to have [uv](https://docs.astral
 ```bash
 git clone https://github.com/davidban77/labcli.git
 cd labcli
-uv sync --extra dev
+uv sync
 ```
 
 This will create a virtual environment and install the required dependencies.
