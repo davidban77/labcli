@@ -1,7 +1,10 @@
 {
     "build": {
         "dockerfile": "./Dockerfile",
-        "context": "./../.."
+        "context": "./../..",
+        "args": {
+            "UV_VERSION": "0.4.24"
+        }
     },
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {
