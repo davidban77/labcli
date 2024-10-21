@@ -6,6 +6,8 @@ RUN echo "deb [trusted=yes] https://netdevops.fury.site/apt/ /" | \
 # install containerlab and tools
 RUN apt update && \
     apt install -y --no-install-recommends containerlab \
+    curl \
+    ca-certificates \
     btop \
     gh \
     iputils-ping \
@@ -33,3 +35,18 @@ ENV PATH="$PATH:/home/vscode/.local/bin"
 RUN ssh-keygen -t ecdsa -b 256 -N "" -f ~/.ssh/id_ecdsa && \
     mkdir -p /home/vscode/.docker && \
     echo "{}" > /home/vscode/.docker/config.json
+
+# Download and install uv
+ADD https://astral.sh/uv/${UV_VERSION}/install.sh /uv-installer.sh
+
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+
+ENV PATH=/root/.cargo/bin:$PATH
+
+# Install labcli
+ADD pyproject.toml uv.lock README.md labcli/ /app/
+
+WORKDIR /app
+RUN uv sync --frozen
+
+ENV PATH=/app/.venv/bin:$PATH
