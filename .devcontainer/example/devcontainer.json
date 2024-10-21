@@ -1,0 +1,21 @@
+{
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": "./../.."
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "dockerDashComposeVersion": "none"
+        },
+        "ghcr.io/devcontainers/features/sshd:1": {
+            "version": "latest"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": ["ms-python.python", "ms-azuretools.vscode-docker"]
+        }
+    },
+    "forwardPorts": [9004, 9005, 9090, 3000]
+}
