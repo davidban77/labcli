@@ -1,6 +1,29 @@
-ARG UV_VERSION
+FROM debian:bookworm-slim AS builder
 
-FROM mcr.microsoft.com/devcontainers/python:3.11-bookworm
+ENV CARGO_HOME="/opt/.cargo"
+
+SHELL [ "/bin/bash", "-o", "pipefail", "-c" ]
+
+WORKDIR /opt
+
+# The installer requires curl (and certificates) to download the release archive
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates curl
+
+# Run uv installer
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+
+FROM mcr.microsoft.com/vscode/devcontainers/base:bookworm
+
+ENV CARGO_HOME="/opt/.cargo"
+ENV PATH="$CARGO_HOME/bin/:$PATH"
+ENV PYTHONUNBUFFERED=True
+ENV UV_LINK_MODE=copy
+
+WORKDIR /opt
+
+COPY --from=builder --chown=vscode: $CARGO_HOME $CARGO_HOME
 
 RUN echo "deb [trusted=yes] https://netdevops.fury.site/apt/ /" | \
     tee -a /etc/apt/sources.list.d/netdevops.list
@@ -31,24 +54,9 @@ RUN mkdir -p /etc/sudoers.d && echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /et
 # vscode user is created in the MS devcontainer image
 USER vscode
 
-ENV PATH="$PATH:/home/vscode/.local/bin"
+ENV PATH="$PATH:/home/vscode/.local/bin:/home/vscode/.venv/bin"
 
 # Create ssh key for vscode user to enable passwordless ssh to devices
 RUN ssh-keygen -t ecdsa -b 256 -N "" -f ~/.ssh/id_ecdsa && \
     mkdir -p /home/vscode/.docker && \
     echo "{}" > /home/vscode/.docker/config.json
-
-# Download and install uv
-ADD https://astral.sh/uv/${UV_VERSION}/install.sh /app/uv-installer.sh
-
-RUN sh /app/uv-installer.sh && rm /app/uv-installer.sh
-
-ENV PATH=/root/.cargo/bin:$PATH
-
-# Install labcli
-ADD pyproject.toml uv.lock README.md labcli/ /app/
-
-WORKDIR /app
-RUN uv sync --frozen
-
-ENV PATH=/app/.venv/bin:$PATH

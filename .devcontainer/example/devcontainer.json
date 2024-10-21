@@ -20,5 +20,8 @@
             "extensions": ["ms-python.python", "ms-azuretools.vscode-docker"]
         }
     },
-    "forwardPorts": [9004, 9005, 9090, 3000]
+    "forwardPorts": [9004, 9005, 9090, 3000],
+    "postCreateCommand": "uv python pin $(cat .python-version) && uv sync --dev",
+    "postStartCommand": "uv run labcli docker build -f example/docker-compose.yml",
+    "remoteUser": "vscode"
 }
