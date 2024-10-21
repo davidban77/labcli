@@ -1,0 +1,8 @@
+include:
+  - "docker-compose.d/collectors.yml"
+  - "docker-compose.d/databases.yml"
+  - "docker-compose.d/visualization.yml"
+
+networks:
+  labcli:
+    driver: bridge

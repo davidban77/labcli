@@ -1,0 +1,38 @@
+name: lab
+prefix: ""  # Empty string to not add a prefix to the containers
+
+mgmt:
+  network: labcli
+  ipv4-subnet: 198.51.100.0/24
+
+topology:
+  kinds:
+    ceos:
+      image: ${CEOS_IMAGE:-ceos:image}
+  nodes:
+    ceos-01:
+      kind: ceos
+      mgmt-ipv4: 198.51.100.11
+      startup-config: startups/ceos-01.conf
+      publish:
+        - tcp/50051
+        - tcp/80
+        - tcp/443
+        - udp/161
+        - tcp/5900
+    ceos-02:
+      kind: ceos
+      mgmt-ipv4: 198.51.100.12
+      startup-config: startups/ceos-02.conf
+      publish:
+        - tcp/50051
+        - tcp/80
+        - tcp/443
+        - udp/161
+        - tcp/5900
+      # ports:
+      #   - 51161:161/udp
+
+  links:
+    - endpoints: ["ceos-01:eth1", "ceos-02:eth1"]
+    - endpoints: ["ceos-01:eth2", "ceos-02:eth2"]

@@ -21,7 +21,7 @@ To install the development environment you need to have [uv](https://docs.astral
 ```bash
 git clone https://github.com/davidban77/labcli.git
 cd labcli
-uv sync --extra dev
+uv sync
 ```
 
 This will create a virtual environment and install the required dependencies.

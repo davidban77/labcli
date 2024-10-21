@@ -1,0 +1,69 @@
+services:
+  telegraf-01:
+    container_name: telegraf-01
+    build:
+      dockerfile: "./telegraf/telegraf.Dockerfile"
+      args:
+        TELEGRAF_IMAGE: ${TELEGRAF_IMAGE:-docker.io/telegraf:1.32}
+        UV_VERSION: ${UV_VERSION:-0.4.24}
+    command: telegraf --config /etc/telegraf/telegraf.conf
+    tty: true
+    volumes:
+      - ./telegraf/telegraf-01.conf.toml:/etc/telegraf/telegraf.conf
+      - ./telegraf/routing_collector.py:/etc/telegraf/routing_collector.py
+    ports:
+      - 9004:9004
+    env_file:
+      - ../../.env
+    environment:
+      DEBUG: true
+    networks:
+      - network-observability
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://0.0.0.0:12201"
+
+  telegraf-02:
+    container_name: telegraf-02
+    build:
+      dockerfile: "./telegraf/telegraf.Dockerfile"
+      args:
+        TELEGRAF_IMAGE: ${TELEGRAF_IMAGE:-docker.io/telegraf:1.32}
+        UV_VERSION: ${UV_VERSION:-0.4.24}
+    command: telegraf --config /etc/telegraf/telegraf.conf
+    tty: true
+    volumes:
+      - ./telegraf/telegraf-02.conf.toml:/etc/telegraf/telegraf.conf
+      - ./telegraf/routing_collector.py:/etc/telegraf/routing_collector.py
+    ports:
+      - 9005:9005
+    env_file:
+      - ../../.env
+    networks:
+      - network-observability
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://0.0.0.0:12201"
+
+  logstash:
+    container_name: logstash
+    image: ${LOGSTASH_LOKI_IMAGE:-docker.io/grafana/logstash-output-loki:3.2.1}
+    command: -f /home/logstash/logstash.cfg
+    volumes:
+      - ./logstash/logstash.cfg:/home/logstash/logstash.cfg
+    ports:
+      - 1515:1515
+      - 9600:9600
+      - 12201:12201/udp
+    environment:
+      XPACK_MONITORING_ENABLED: false
+    env_file:
+      - ../../.env
+    networks:
+      - network-observability
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://0.0.0.0:12201"

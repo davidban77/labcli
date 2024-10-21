@@ -1,0 +1,27 @@
+services:
+  grafana:
+    container_name: grafana
+    image: ${GRAFANA_IMAGE:-docker.io/grafana/grafana:11.2.2}
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/all.yml
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/all.yml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - grafana_data:/grafana
+    environment:
+      GF_INSTALL_PLUGINS: natel-discrete-panel,fifemon-graphql-datasource,yesoreyeram-infinity-datasource,volkovlabs-echarts-panel
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+    env_file:
+      - ../../.env
+    networks:
+      - network-observability
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://0.0.0.0:12201"
+
+volumes:
+  grafana_data:
