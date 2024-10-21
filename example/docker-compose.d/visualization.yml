@@ -17,7 +17,7 @@ services:
     env_file:
       - ../../.env
     networks:
-      - network-observability
+      - labcli
     logging:
       driver: gelf
       options:

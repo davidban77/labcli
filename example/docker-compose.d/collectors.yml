@@ -2,7 +2,7 @@ services:
   telegraf-01:
     container_name: telegraf-01
     build:
-      dockerfile: "./telegraf/telegraf.Dockerfile"
+      context: "./telegraf"
       args:
         TELEGRAF_IMAGE: ${TELEGRAF_IMAGE:-docker.io/telegraf:1.32}
         UV_VERSION: ${UV_VERSION:-0.4.24}
@@ -18,7 +18,7 @@ services:
     environment:
       DEBUG: true
     networks:
-      - network-observability
+      - labcli
     logging:
       driver: gelf
       options:
@@ -27,7 +27,7 @@ services:
   telegraf-02:
     container_name: telegraf-02
     build:
-      dockerfile: "./telegraf/telegraf.Dockerfile"
+      context: "./telegraf"
       args:
         TELEGRAF_IMAGE: ${TELEGRAF_IMAGE:-docker.io/telegraf:1.32}
         UV_VERSION: ${UV_VERSION:-0.4.24}
@@ -41,7 +41,7 @@ services:
     env_file:
       - ../../.env
     networks:
-      - network-observability
+      - labcli
     logging:
       driver: gelf
       options:
@@ -62,7 +62,7 @@ services:
     env_file:
       - ../../.env
     networks:
-      - network-observability
+      - labcli
     logging:
       driver: gelf
       options:

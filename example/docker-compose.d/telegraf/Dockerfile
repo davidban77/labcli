@@ -18,6 +18,10 @@ RUN sh /uv-installer.sh && rm /uv-installer.sh
 
 ENV PATH=/root/.cargo/bin:$PATH
 
-RUN uv venv && \
-    uv python install 3.12 && \
-    uv add netmiko jmespath rich ttp
+ADD pyproject.toml uv.lock /app/
+
+WORKDIR /app
+
+RUN uv sync --frozen
+
+ENV PATH="/app/.venv/bin:$PATH"
