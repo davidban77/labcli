@@ -15,5 +15,6 @@
             "version": "latest"
         }
     },
-    "postCreateCommand": "uv python pin $(cat .python-version) && uv sync"
+    "postCreateCommand": "uv python pin $(cat .python-version) && uv sync",
+    "remoteUser": "vscode"
 }
