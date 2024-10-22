@@ -37,10 +37,10 @@ jobs:
         # If it's a tagged release, use the tag, otherwise use 'main'
         if [[ "${{ github.ref }}" == refs/tags/* ]]; then
           echo "Image tag: ${{ github.ref_name }}"
-          echo "::set-output name=tag::${{ github.ref_name }}"
+          echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
         else
           echo "Image tag: main"
-          echo "::set-output name=tag::main"
+          echo "tag=main" >> $GITHUB_OUTPUT
         fi
 
     - name: Build and push devcontainer image
