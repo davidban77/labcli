@@ -21,7 +21,7 @@
         }
     },
     "forwardPorts": [9004, 9005, 9090, 3000],
-    "postCreateCommand": "uv python pin $(cat .python-version) && uv sync && uv run labcli docker build -c example/docker-compose.yml",
-    "postStartCommand": "uv run labcli docker start -c example/docker-compose.yml",
+    "postCreateCommand": "uv python pin $(cat .python-version) && uv sync && touch .env && uv run labcli docker build -c example/docker-compose.yml",
+    "postStartCommand": "uv run labcli docker start -c example/docker-compose.yml --profile full",
     "remoteUser": "vscode"
 }
