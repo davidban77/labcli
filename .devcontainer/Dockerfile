@@ -16,6 +16,9 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 FROM mcr.microsoft.com/vscode/devcontainers/base:bookworm
 
+LABEL org.opencontainers.image.source="https://github.com/davidban77/labcli"
+LABEL org.opencontainers.image.description="LabCLI devcontainer base image."
+
 ENV CARGO_HOME="/opt/.cargo"
 ENV PATH="$CARGO_HOME/bin/:$PATH"
 ENV PYTHONUNBUFFERED=True
