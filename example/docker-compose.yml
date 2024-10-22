@@ -5,4 +5,5 @@ include:
 
 networks:
   labcli:
+    name: labcli
     driver: bridge

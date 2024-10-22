@@ -552,7 +552,6 @@ def docker_update(
     ] = None,
     services: Annotated[list[str] | None, typer.Argument(help="Service(s) to update")] = None,
     volumes: Annotated[bool, typer.Option(help="Remove volumes")] = False,
-    force: Annotated[bool, typer.Option(help="Force removal of containers")] = False,
     verbose: Annotated[bool, typer.Option(help="Verbose mode")] = False,
 ):
     """Update services.
@@ -569,7 +568,7 @@ def docker_update(
 
     # Delete the containers
     drms = docker_rm(
-        compose_file=compose_file, profiles=profiles, services=services, verbose=verbose, force=force, volumes=volumes
+        compose_file=compose_file, profiles=profiles, services=services, verbose=verbose, force=True, volumes=volumes
     )
 
     # Start them back if the removal was successful
