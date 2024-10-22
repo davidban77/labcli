@@ -1,7 +1,10 @@
 {
     "build": {
         "dockerfile": "./Dockerfile",
-        "context": ".."
+        "context": "..",
+        "args": {
+            "UV_VERSION": "0.4.24"
+        }
     },
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {
@@ -12,9 +15,5 @@
             "version": "latest"
         }
     },
-    "customizations": {
-        "vscode": {
-            "extensions": ["ms-azuretools.vscode-docker"]
-        }
-    }
+    "postCreateCommand": "uv python pin $(cat .python-version) && uv sync"
 }
