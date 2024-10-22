@@ -1,14 +1,12 @@
 """ Containerlab management related commands. """
 
 import subprocess
-from enum import Enum
 from pathlib import Path
-from typing import Any
 
 import typer
 from typing_extensions import Annotated
 
-from labcli.base import ENVVARS, console, is_truthy, run_cmd
+from labcli.base import console, run_cmd
 
 app = typer.Typer(help="Containerlab management related commands.", rich_markup_mode="rich")
 
@@ -29,7 +27,7 @@ def containerlab_deploy(
     """Deploy a containerlab topology.
 
     [u]Example:[/u]
-        [i]labcli containerlab deploy --topology ./containerlab/lab.clab.yaml[/i]
+        [i]labcli containerlab deploy ./containerlab/lab.clab.yaml[/i]
     """
     console.log("Deploying containerlab topology", style="info")
     console.log(f"Topology file: [orange1 i]{topology}", style="info")
@@ -55,7 +53,7 @@ def containerlab_destroy(
     """Destroy a containerlab topology.
 
     [u]Example:[/u]
-        [i]labcli containerlab destroy --topology ./containerlab/lab.clab.yaml[/i]
+        [i]labcli containerlab destroy ./containerlab/lab.clab.yaml[/i]
     """
     console.log("Deploying containerlab topology", style="info")
     console.log(f"Topology file: [orange1 i]{topology}", style="info")
@@ -81,7 +79,7 @@ def containerlab_inspect(
     """Inspect a containerlab topology.
 
     [u]Example:[/u]
-        [i]labcli containerlab show --topology ./containerlab/lab.clab.yaml[/i]
+        [i]labcli containerlab show ./containerlab/lab.clab.yaml[/i]
     """
     console.log("Showing containerlab topology", style="info")
     console.log(f"Topology file: [orange1 i]{topology}", style="info")

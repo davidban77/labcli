@@ -1,0 +1,20 @@
+{
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": "..",
+        "args": {
+            "UV_VERSION": "0.4.24"
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "dockerDashComposeVersion": "none"
+        },
+        "ghcr.io/devcontainers/features/sshd:1": {
+            "version": "latest"
+        }
+    },
+    "postCreateCommand": "uv python pin $(cat .python-version) && uv sync",
+    "remoteUser": "vscode"
+}

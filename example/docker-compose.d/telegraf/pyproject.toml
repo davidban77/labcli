@@ -1,0 +1,9 @@
+[project]
+name = "routing-collector"
+version = "0.1.0"
+dependencies = [
+    "netmiko",
+    "jmespath",
+    "ttp",
+    "rich"
+]

@@ -1,0 +1,27 @@
+{
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": "./../..",
+        "args": {
+            "UV_VERSION": "0.4.24"
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "dockerDashComposeVersion": "none"
+        },
+        "ghcr.io/devcontainers/features/sshd:1": {
+            "version": "latest"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": ["ms-python.python", "ms-azuretools.vscode-docker", "tamasfe.even-better-toml"]
+        }
+    },
+    "forwardPorts": [9004, 9005, 9090, 3000],
+    "postCreateCommand": "uv python pin $(cat .python-version) && uv sync && touch .env && uv run labcli docker build -c example/docker-compose.yml --profile full",
+    "postStartCommand": "uv run labcli docker network create --name labcli && uv run labcli docker start -c example/docker-compose.yml --profile full",
+    "remoteUser": "vscode"
+}
