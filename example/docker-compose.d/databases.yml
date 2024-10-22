@@ -13,6 +13,9 @@ services:
       - ../../.env
     networks:
       - labcli
+    profiles:
+      - db
+      - full
     logging:
       driver: gelf
       options:
@@ -36,6 +39,9 @@ services:
       - ../../.env
     networks:
       - labcli
+    profiles:
+      - db
+      - full
     logging:
       driver: gelf
       options:

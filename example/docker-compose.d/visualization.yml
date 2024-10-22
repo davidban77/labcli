@@ -18,6 +18,9 @@ services:
       - ../../.env
     networks:
       - labcli
+    profiles:
+      - vis
+      - full
     logging:
       driver: gelf
       options:

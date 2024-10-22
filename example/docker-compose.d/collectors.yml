@@ -19,6 +19,9 @@ services:
       DEBUG: true
     networks:
       - labcli
+    profiles:
+      - collector
+      - full
     logging:
       driver: gelf
       options:
@@ -42,6 +45,9 @@ services:
       - ../../.env
     networks:
       - labcli
+    profiles:
+      - collector
+      - full
     logging:
       driver: gelf
       options:
@@ -63,6 +69,9 @@ services:
       - ../../.env
     networks:
       - labcli
+    profiles:
+      - collector
+      - full
     logging:
       driver: gelf
       options:

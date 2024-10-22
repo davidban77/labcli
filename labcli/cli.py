@@ -1,3 +1,4 @@
+""" LabCLI Application. """
 import typer
 
 import labcli.utils.containerlab_utils as containerlab_utils

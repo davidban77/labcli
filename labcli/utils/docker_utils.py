@@ -136,7 +136,7 @@ def run_docker_compose_cmd(
 @app.command(rich_help_panel="Docker Image Management", name="build")
 def docker_build(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -153,7 +153,7 @@ def docker_build(
         [i]labcli docker build[/i]
 
     To build a specific services:
-        [i]labcli docker build --file ./other/docker-compose.yml telegraf-01 telegraf-02[/i]
+        [i]labcli docker build --compose ./other/docker-compose.yml telegraf-01 telegraf-02[/i]
     """
     console.log(f"Building service(s): [orange1 i]{services if services else 'all'}", style="info")
     run_docker_compose_cmd(
@@ -169,7 +169,7 @@ def docker_build(
 @app.command(rich_help_panel="Docker Image Management", name="pull")
 def docker_pull(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -186,7 +186,7 @@ def docker_pull(
         [i]labcli docker pull[/i]
 
     To pull a specific services:
-        [i]labcli docker pull --file ./other/docker-compose.yml telegraf-01 telegraf-02[/i]
+        [i]labcli docker pull --compose ./other/docker-compose.yml telegraf-01 telegraf-02[/i]
     """
     console.log(f"Pulling service(s): [orange1 i]{services if services else 'all'}", style="info")
     run_docker_compose_cmd(
@@ -202,7 +202,7 @@ def docker_pull(
 @app.command(rich_help_panel="Docker Stack Management", name="exec")
 def docker_exec(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -237,7 +237,7 @@ def docker_exec(
 @app.command(rich_help_panel="Docker Stack Management", name="debug")
 def docker_debug(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -271,7 +271,7 @@ def docker_debug(
 @app.command(rich_help_panel="Docker Stack Management", name="start")
 def docker_start(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -305,7 +305,7 @@ def docker_start(
 @app.command(rich_help_panel="Docker Stack Management", name="stop")
 def docker_stop(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -338,7 +338,7 @@ def docker_stop(
 @app.command(rich_help_panel="Docker Stack Management", name="restart")
 def docker_restart(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -371,7 +371,7 @@ def docker_restart(
 @app.command(rich_help_panel="Docker Stack Management", name="logs")
 def docker_logs(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -415,7 +415,7 @@ def docker_logs(
 @app.command(rich_help_panel="Docker Stack Management", name="ps")
 def docker_ps(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -449,7 +449,7 @@ def docker_ps(
 @app.command(rich_help_panel="Docker Stack Management", name="destroy")
 def docker_destroy(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -490,7 +490,7 @@ def docker_destroy(
 @app.command(rich_help_panel="Docker Stack Management", name="rm")
 def docker_rm(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,
@@ -543,7 +543,7 @@ def docker_rm(
 @app.command(rich_help_panel="Docker Stack Management", name="update")
 def docker_update(
     compose_file: Annotated[
-        Path, typer.Option("--file", "-f", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
+        Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
     profiles: Annotated[
         list[str] | None,

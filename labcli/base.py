@@ -6,7 +6,6 @@ import subprocess  # nosec
 from pathlib import Path
 from typing import Any, Optional
 
-import typer
 from dotenv import dotenv_values, load_dotenv
 from rich.console import Console
 from rich.theme import Theme

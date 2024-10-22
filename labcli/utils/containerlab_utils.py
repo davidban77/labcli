@@ -1,14 +1,12 @@
 """ Containerlab management related commands. """
 
 import subprocess
-from enum import Enum
 from pathlib import Path
-from typing import Any
 
 import typer
 from typing_extensions import Annotated
 
-from labcli.base import ENVVARS, console, is_truthy, run_cmd
+from labcli.base import console, run_cmd
 
 app = typer.Typer(help="Containerlab management related commands.", rich_markup_mode="rich")
 
