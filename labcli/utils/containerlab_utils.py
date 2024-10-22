@@ -27,7 +27,7 @@ def containerlab_deploy(
     """Deploy a containerlab topology.
 
     [u]Example:[/u]
-        [i]labcli containerlab deploy --topology ./containerlab/lab.clab.yaml[/i]
+        [i]labcli containerlab deploy ./containerlab/lab.clab.yaml[/i]
     """
     console.log("Deploying containerlab topology", style="info")
     console.log(f"Topology file: [orange1 i]{topology}", style="info")
@@ -53,7 +53,7 @@ def containerlab_destroy(
     """Destroy a containerlab topology.
 
     [u]Example:[/u]
-        [i]labcli containerlab destroy --topology ./containerlab/lab.clab.yaml[/i]
+        [i]labcli containerlab destroy ./containerlab/lab.clab.yaml[/i]
     """
     console.log("Deploying containerlab topology", style="info")
     console.log(f"Topology file: [orange1 i]{topology}", style="info")
@@ -79,7 +79,7 @@ def containerlab_inspect(
     """Inspect a containerlab topology.
 
     [u]Example:[/u]
-        [i]labcli containerlab show --topology ./containerlab/lab.clab.yaml[/i]
+        [i]labcli containerlab show ./containerlab/lab.clab.yaml[/i]
     """
     console.log("Showing containerlab topology", style="info")
     console.log(f"Topology file: [orange1 i]{topology}", style="info")

@@ -585,17 +585,16 @@ def docker_network(
         DockerNetworkAction,
         typer.Argument(..., help="Action to perform", case_sensitive=False),
     ],
-    name: Annotated[str, typer.Option("-n", "--name", help="Network name")] = "labcli",
-    driver: Annotated[str, typer.Option(help="Network driver")] = "bridge",
-    subnet: Annotated[str, typer.Option(help="Network subnet")] = "198.51.100.0/24",
-    verbose: Annotated[bool, typer.Option(help="Verbose mode")] = False,
+    name: Annotated[str, typer.Option("-n", "--name", help="Network name")],
+    driver: Annotated[str | None, typer.Option(help="Network driver")] = None,
+    subnet: Annotated[str | None, typer.Option(help="Network subnet")] = None,
 ) -> subprocess.CompletedProcess | None:
     """Manage docker network.
 
     [u]Example:[/u]
 
     To create a network:
-        [i]labcli docker network create --name labcli --driver bridge --subnet
+        [i]labcli docker network create --name labcli --driver bridge --subnet 198.51.100.0/24
 
     To list all networks:
         [i]labcli docker network ls[/i]

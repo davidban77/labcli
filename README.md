@@ -33,7 +33,7 @@ To see it in action, this repository comes with an `example` directory that cont
 To start the `containerlab` environment:
 
 ```bash
-labcli containerlab start --topology example/containerlab/lab.clab.yml
+labcli containerlab start example/containerlab/lab.clab.yml
 ```
 
 To start the `docker compose` environment:
