@@ -16,5 +16,6 @@
         }
     },
     "postCreateCommand": "uv python pin $(cat .python-version) && uv sync",
+    "postStartCommand": "uv run labcli --help",
     "remoteUser": "vscode"
 }
