@@ -117,6 +117,7 @@ def run_docker_compose_cmd(
     exec_cmd = docker_compose_cmd(
         action,
         docker_compose_file=compose_file,
+        profiles=profiles,
         services=services,
         command=command,
         verbose=verbose,
