@@ -29,7 +29,7 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        # password: ${{ secrets.GH_TOKEN }}
+        password: ${{ secrets.GH_TOKEN }}
 
     - name: Set Docker image tag
       id: image_tag
