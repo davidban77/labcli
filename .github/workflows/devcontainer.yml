@@ -4,17 +4,11 @@ on:
   push:
     branches:
       - main
-      - devcontainer
     tags:
-      - 'v*' # Matches version tags like v0.1.0, v1.0.0, etc.
-  workflow_run:
-    workflows: ["CI - Run Tests"]  # Reference the name of the test workflow
-    types:
-      - completed
+      - 'v**'
 
 jobs:
   devcontainer:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-22.04
 
     steps:
