@@ -3,7 +3,7 @@ name: Publish Python Package to PyPI
 on:
   push:
     tags:
-      - 'v**'  # Triggers workflow on version tags like v0.1.0
+      - 'v**'
 
 jobs:
   publish:
@@ -28,9 +28,9 @@ jobs:
       run: uv run pytest tests
 
     - name: Build package
-      run: uv build  # Builds the package for PyPI distribution
+      run: uv build
 
     - name: Publish package
-      run: uv publish pypi  # Publishes to PyPI
+      run: uv publish
       env:
-        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}  # Use your PyPI token stored in GitHub Secrets
+        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
