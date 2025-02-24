@@ -12,8 +12,8 @@ services:
       - grafana_data:/grafana
     environment:
       GF_INSTALL_PLUGINS: natel-discrete-panel,fifemon-graphql-datasource,yesoreyeram-infinity-datasource,volkovlabs-echarts-panel
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin123}
     env_file:
       - ../../.env
     networks:

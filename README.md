@@ -11,6 +11,31 @@ To get started you can install the package from PyPI.
 pip install labcli
 ```
 
+**Pulumi support:**
+
+Some commands require Pulumi to be installed. You can install it using the following command:
+
+```bash
+# If in a Linux environment
+curl -fsSL https://get.pulumi.com | sh
+
+# If in a Windows environment
+choco install pulumi
+
+# If in a macOS environment
+brew install pulumi/tap/pulumi
+```
+
+> NOTE: For more information on how to install Pulumi, please refer to the [official documentation](https://www.pulumi.com/docs/get-started/install/).
+
+Then set pulumi to to work locally:
+
+```bash
+pulumi login --local
+```
+
+This will store the state locally in your home directory. For more information setting pulumi for local state management see the [official documentation](https://www.pulumi.com/docs/iac/cli/commands/pulumi_login/).
+
 ## Usage
 
 To get started you can use the `labcli` command:
