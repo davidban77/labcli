@@ -2,6 +2,7 @@
 import typer
 
 import labcli.cmds.containerlab as containerlab
+import labcli.cmds.digitalocean as do
 import labcli.cmds.docker as docker
 from labcli.base import console
 from labcli.version import __version__, banner
@@ -14,6 +15,7 @@ app = typer.Typer(
 
 app.add_typer(containerlab.app, name="containerlab")
 app.add_typer(docker.app, name="docker")
+app.add_typer(do.app, name="digitalocean")
 
 
 def version_callback(value: bool):

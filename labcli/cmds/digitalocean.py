@@ -1,4 +1,5 @@
 import os
+from typing import Annotated
 
 import pulumi
 import pulumi.automation as auto
@@ -14,7 +15,7 @@ if not DO_TOKEN:
     raise SystemExit(1)
 
 
-def pulumi_program():
+def pulumi_program(name: str, region: str, size: str, image: str, ssh_key: str = os.getenv("SSH_KEY_ID", "")):
     user_data = """#!/bin/bash
 set -e
 apt-get update -y
@@ -52,9 +53,19 @@ def get_stack():
 
 
 @app.command()
-def boot():
-    """
-    Boot up (create) the droplet using Pulumi.
+def boot(
+    name: Annotated[str, typer.Argument(help="Name of the droplet to create. Example 'my-droplet'")] = "my-droplet",
+    region: Annotated[do.Region, typer.Option(help="Region to create the droplet in. Example 'LON1'")] = do.Region.LON1,
+    size: Annotated[str, typer.Option(help="Size of the droplet")] = "s-1vcpu-1gb",
+    image: Annotated[str, typer.Option(help="Image to use for the droplet")] = "ubuntu-20-04-x64",
+):
+    """Boot up (create) the droplet using Pulumi.
+
+    [b]Examples:[/b]
+    \b
+    [i]labcli digitalocean boot my-droplet --region LON1 --size s-1vcpu-1gb --image ubuntu-20-04-x64 --ssh-key your-ssh-key-id[/i]
+    \b
+    [i]labcli digitalocean boot my-droplet --region LON1 --size s-1vcpu-1gb --image ubuntu-22-04-x64 --ssh-key your-ssh-key-id[/i]
     """
     stack = get_stack()
     typer.echo("Starting droplet creation (pulumi up)...")
@@ -66,68 +77,64 @@ def boot():
         typer.echo("Droplet creation completed, but no IP was exported.")
 
 
-@app.command("list")
-def list_droplet(name: str = typer.Option(None, help="Name of the droplet to list details for")):
-    """
-    List details for droplets. If a name is provided, shows details for that droplet.
-    Otherwise, lists all droplets.
-    """
-    if name:
-        try:
-            droplet = do.get_droplet(name=name)
-            typer.echo("-----")
-            typer.echo(f"ID: {droplet.id}")
-            typer.echo(f"Name: {droplet.name}")
-            typer.echo(f"IP: {droplet.ipv4_address}")
-            typer.echo(f"Region: {droplet.region}")
-            typer.echo(f"Size: {droplet.size}")
-        except Exception as e:
-            typer.echo(f"No droplet found with name '{name}'. Error: {e}")
-    else:
-        try:
-            droplets = do.get_droplets()
-            if not droplets.droplets:
-                typer.echo("No droplets found.")
-                return
-            for droplet in droplets.droplets:
-                typer.echo("-----")
-                typer.echo(f"ID: {droplet.id}")
-                typer.echo(f"Name: {droplet.name}")
-                typer.echo(f"IP: {droplet.ipv4_address}")
-                typer.echo(f"Region: {droplet.region}")
-                typer.echo(f"Size: {droplet.size}")
-        except Exception as e:
-            typer.echo(f"Error listing droplets: {e}")
+# @app.command("list")
+# def list_droplet(name: str = typer.Option(None, help="Name of the droplet to list details for")):
+#     """
+#     List details for droplets. If a name is provided, shows details for that droplet.
+#     Otherwise, lists all droplets.
+#     """
+#     if name:
+#         try:
+#             droplet = do.get_droplet(name=name)
+#             typer.echo("-----")
+#             typer.echo(f"ID: {droplet.id}")
+#             typer.echo(f"Name: {droplet.name}")
+#             typer.echo(f"IP: {droplet.ipv4_address}")
+#             typer.echo(f"Region: {droplet.region}")
+#             typer.echo(f"Size: {droplet.size}")
+#         except Exception as e:
+#             typer.echo(f"No droplet found with name '{name}'. Error: {e}")
+#     else:
+#         try:
+#             droplets = do.get_droplets()
+#             if not droplets.droplets:
+#                 typer.echo("No droplets found.")
+#                 return
+#             for droplet in droplets.droplets:
+#                 typer.echo("-----")
+#                 typer.echo(f"ID: {droplet.id}")
+#                 typer.echo(f"Name: {droplet.name}")
+#                 typer.echo(f"IP: {droplet.ipv4_address}")
+#                 typer.echo(f"Region: {droplet.region}")
+#                 typer.echo(f"Size: {droplet.size}")
+#         except Exception as e:
+#             typer.echo(f"Error listing droplets: {e}")
 
 
-@app.command()
-def update():
-    """
-    Update the droplet configuration using Pulumi.
+# @app.command()
+# def update():
+#     """
+#     Update the droplet configuration using Pulumi.
 
-    Re-running pulumi up will compare your current state with the desired state
-    (as defined in your pulumi program) and make any necessary changes.
-    """
-    stack = get_stack()
-    typer.echo("Updating droplet configuration (pulumi up)...")
-    up_res = stack.up(on_output=print)
-    droplet_ip = up_res.outputs.get("droplet_ip")
-    if droplet_ip:
-        typer.echo(f"Droplet updated. Current IP: {droplet_ip.value}")
-    else:
-        typer.echo("Update completed, but no IP was exported.")
-
-
-@app.command()
-def destroy():
-    """
-    Destroy the droplet using Pulumi.
-    """
-    stack = get_stack()
-    typer.echo("Destroying the droplet (pulumi destroy)...")
-    stack.destroy(on_output=print)
-    typer.echo("Droplet destroyed.")
+#     Re-running pulumi up will compare your current state with the desired state
+#     (as defined in your pulumi program) and make any necessary changes.
+#     """
+#     stack = get_stack()
+#     typer.echo("Updating droplet configuration (pulumi up)...")
+#     up_res = stack.up(on_output=print)
+#     droplet_ip = up_res.outputs.get("droplet_ip")
+#     if droplet_ip:
+#         typer.echo(f"Droplet updated. Current IP: {droplet_ip.value}")
+#     else:
+#         typer.echo("Update completed, but no IP was exported.")
 
 
-if __name__ == "__main__":
-    app()
+# @app.command()
+# def destroy():
+#     """
+#     Destroy the droplet using Pulumi.
+#     """
+#     stack = get_stack()
+#     typer.echo("Destroying the droplet (pulumi destroy)...")
+#     stack.destroy(on_output=print)
+#     typer.echo("Droplet destroyed.")

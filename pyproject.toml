@@ -13,7 +13,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "typer>=0.15.1",
+    "typer>=0.15.2",
     "python-dotenv>=1.0.1",
     "pulumi>=3.152.0",
     "pulumi_digitalocean>=4.40.0",
