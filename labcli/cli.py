@@ -1,8 +1,9 @@
 """ LabCLI Application. """
 import typer
 
-import labcli.utils.containerlab_utils as containerlab_utils
-import labcli.utils.docker_utils as docker_utils
+import labcli.cmds.containerlab as containerlab
+import labcli.cmds.digitalocean as do
+import labcli.cmds.docker as docker
 from labcli.base import console
 from labcli.version import __version__, banner
 
@@ -12,8 +13,9 @@ app = typer.Typer(
     rich_markup_mode="rich",
 )
 
-app.add_typer(containerlab_utils.app, name="containerlab")
-app.add_typer(docker_utils.app, name="docker")
+app.add_typer(containerlab.app, name="containerlab")
+app.add_typer(docker.app, name="docker")
+app.add_typer(do.app, name="digitalocean")
 
 
 def version_callback(value: bool):

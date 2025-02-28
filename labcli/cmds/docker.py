@@ -1,12 +1,15 @@
-""" Docker management related commands. """
+"""Docker management related commands."""
 
+import json
 import subprocess
+import time
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, Annotated
 
 import typer
-from typing_extensions import Annotated
+from rich.live import Live
+from rich.table import Table
 
 from labcli.base import ENVVARS, console, is_truthy, run_cmd
 
@@ -28,8 +31,8 @@ class DockerNetworkAction(Enum):
 def docker_compose_cmd(
     compose_action: str,
     docker_compose_file: Path,
-    profiles: list[str] = [],
-    services: list[str] = [],
+    profiles: list[str] | None = None,
+    services: list[str] | None = None,
     verbose: int = 0,
     extra_options: str = "",
     command: str = "",
@@ -40,8 +43,8 @@ def docker_compose_cmd(
     Args:
         compose_action (str): Docker Compose action to run.
         docker_compose_file (Path): Docker compose file.
-        profiles (List[str], optional): List of profiles to use. Defaults to [].
-        services (List[str], optional): List of specifics container to action. Defaults to [].
+        profiles (List[str], optional): List of profiles to use. Defaults to None.
+        services (List[str], optional): List of specifics container to action. Defaults to None.
         verbose (int, optional): Verbosity. Defaults to 0.
         extra_options (str, optional): Extra docker compose flags to pass to the command line. Defaults to "".
         command (str, optional): Command to execute in docker compose. Defaults to "".
@@ -58,8 +61,9 @@ def docker_compose_cmd(
     if project_name:
         exec_cmd += f" --project-name {project_name}"
 
-    for profile in profiles:
-        exec_cmd += f" --profile {profile}"
+    if profiles:
+        exec_cmd += " "
+        exec_cmd += " ".join([f"--profile {profile}" for profile in profiles])
 
     if verbose:
         exec_cmd += " --verbose"
@@ -79,8 +83,8 @@ def run_docker_compose_cmd(
     compose_file: Path,
     action: str,
     project_name: str | None = None,
-    profiles: list[str] = [],
-    services: list[str] = [],
+    profiles: list[str] | None = None,
+    services: list[str] | None = None,
     verbose: int = 0,
     command: str = "",
     extra_options: str = "",
@@ -96,8 +100,8 @@ def run_docker_compose_cmd(
         compose_file (str): Docker compose file.
         action (str): Docker compose action. Example 'up'
         project_name (str, optional): Project name. Defaults to None.
-        profiles (list[str], optional): List of profiles defined in the docker compose. Defaults to [].
-        services (list[str], optional): List of services defined in the docker compose. Defaults to [].
+        profiles (list[str], optional): List of profiles defined in the docker compose. Defaults to None.
+        services (list[str], optional): List of services defined in the docker compose. Defaults to None.
         verbose (int, optional): Execute verbose command. Defaults to 0.
         command (str, optional): Docker compose command to send on action `exec`. Defaults to "".
         extra_options (str, optional): Extra options to pass over docker compose command. Defaults to "".
@@ -132,6 +136,60 @@ def run_docker_compose_cmd(
         capture_output=capture_output,
         task_name=f"{task_name}",
     )
+
+
+def show_docker_status(compose_file: Path, services: list[str] | None, verbose: bool = False, all: bool = False):
+    """Show docker containers status.
+
+    Args:
+        compose_file (Path): Docker compose file.
+        services (list[str], optional): List of services to show status. Defaults to None.
+        verbose (bool, optional): Verbose mode. Defaults to False.
+        all (bool, optional): Show all containers. Defaults to False.
+
+    Returns:
+        Table: Rich Table with the status of the containers
+    """
+    docker_status = run_docker_compose_cmd(
+        action="ps --format json",
+        compose_file=compose_file,
+        services=services if services else [],
+        verbose=verbose,
+        profiles=[],
+        extra_options="--all" if all else "",
+        task_name="show containers",
+        capture_output=True,
+    )
+    table = Table(title="Docker Containers")
+    table.add_column("Service")
+    table.add_column("Container Name")
+    table.add_column("Container ID")
+    table.add_column("Image")
+    table.add_column("Status")
+    table.add_column("Ports")
+    table.add_column("Up Time")
+
+    for container in docker_status.stdout.splitlines():
+        if len(container) <= 0:
+            continue
+        container = json.loads(container)
+        container_name = container["Name"]
+        if container["Health"] == "healthy":
+            container_name = f"[success]{container_name}[/success]"
+        elif container["Health"] == "unhealthy":
+            container_name = f"[error]{container_name}[/error]"
+        elif container["State"] == "starting":
+            container_name = f"[info]{container_name}[/info]"
+        table.add_row(
+            container["Service"],
+            container_name,
+            container["ID"],
+            container["Image"],
+            container["State"],
+            container["Ports"],
+            container["RunningFor"],
+        )
+    return table
 
 
 @app.command(rich_help_panel="Docker Image Management", name="build")
@@ -295,10 +353,10 @@ def docker_start(
     run_docker_compose_cmd(
         action="up",
         compose_file=compose_file,
-        profiles=profiles if profiles else [],
-        services=services if services else [],
+        profiles=profiles,
+        services=services,
         verbose=verbose,
-        extra_options="-d --remove-orphans",
+        extra_options="-d --remove-orphans --build",
         task_name="start stack",
     )
 
@@ -413,38 +471,34 @@ def docker_logs(
     )
 
 
-@app.command(rich_help_panel="Docker Stack Management", name="ps")
-def docker_ps(
+@app.command(rich_help_panel="Docker Stack Management", name="list")
+def docker_list(
+    services: Annotated[list[str] | None, typer.Argument(help="Service(s) to show status")] = None,
     compose_file: Annotated[
         Path, typer.Option("--compose", "-c", help="Docker Compose file.", exists=True, file_okay=True, readable=True)
     ] = Path("./docker-compose.yml"),
-    profiles: Annotated[
-        list[str] | None,
-        typer.Option("--profile", "-p", help="Docker Compose profile", case_sensitive=False),
-    ] = None,
-    services: Annotated[list[str] | None, typer.Argument(help="Service(s) to show status")] = None,
     verbose: Annotated[bool, typer.Option(help="Verbose mode")] = False,
+    all: Annotated[bool, typer.Option(help="Show all containers")] = True,
+    watch: Annotated[bool, typer.Option(help="Watch for changes in real time.")] = False,
 ) -> subprocess.CompletedProcess | None:
-    """Show containers.
+    """List containers status.
 
     [u]Example:[/u]
 
     To show all services:
-        [i]labcli docker ps[/i]
+        [i]labcli docker list[/i]
 
-    To show a specific service:
-        [i]labcli docker ps telegraf-01[/i]
+    To show specific services and show live updates:
+        [i]labcli docker list telegraf-01 telegraf-02 --watch[/i]
     """
     console.log(f"Showing containers for service(s): [orange1 i]{services if services else 'all'}", style="info")
-    run_docker_compose_cmd(
-        action="ps",
-        compose_file=compose_file,
-        profiles=profiles if profiles else [],
-        services=services if services else [],
-        verbose=verbose,
-        extra_options="--all",
-        task_name="show containers",
-    )
+    if watch:
+        with Live(show_docker_status(compose_file, services, verbose, all), console=console) as live:
+            while True:
+                live.update(show_docker_status(compose_file, services, verbose, all), refresh=True)
+                time.sleep(2)
+    else:
+        console.print(show_docker_status(compose_file, services, verbose, all))
 
 
 @app.command(rich_help_panel="Docker Stack Management", name="destroy")
@@ -507,22 +561,22 @@ def docker_rm(
     [u]Example:[/u]
 
     To remove all services:
-        [i]netobs docker rm --scenario batteries-included[/i]
+        [i]labcli docker rm[/i]
 
     To remove a specific service:
-        [i]netobs docker rm telegraf-01 --scenario batteries-included[/i]
+        [i]labcli docker rm telegraf-01[/i]
 
     To remove a specific service and remove volumes:
-        [i]netobs docker rm telegraf-01 --volumes --scenario batteries-included[/i]
+        [i]labcli docker rm telegraf-01 --volumes[/i]
 
     To remove all services and remove volumes:
-        [i]netobs docker rm --volumes --scenario batteries-included[/i]
+        [i]labcli docker rm --volumes[/i]
 
     To remove all services and force removal of containers:
-        [i]netobs docker rm --force --scenario batteries-included[/i]
+        [i]labcli docker rm --force[/i]
 
     To force removal of a specific service and remove volumes:
-        [i]netobs docker rm telegraf-01 --volumes --force --scenario batteries-included[/i]
+        [i]labcli docker rm telegraf-01 --volumes --force[/i]
     """
     console.log(f"Removing service(s): [orange1 i]{services if services else 'all'}", style="info")
     extra_options = "--stop "
